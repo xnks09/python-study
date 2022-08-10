@@ -44,22 +44,22 @@ print('Learn Python', file=sys.stdout)
 
 print()
 
-# format 사용(d, s, f)
+# format 사용(d : 3, s : 'python', f : 3.1445454)
 print('%s %s' % ('one', 'two'))
 print('{} {}'.format('one', 'two'))
 print('{1} {0}'.format('one', 'two'))
 
 # %s
-print('%10s' % ('nice',))
-print('{:>10}'.format('nice'))
+print('%10s' % ('nice',)) #10자리를 맞춰서 보여줌
+print('{:>10}'.format('nice')) #공백을 왼쪽부터 채움
 
-print('%-10s' % ('nice',))
-print('{:10}'.format('nice'))
+print('%-10s' % ('nice',)) #공백을 오른쪽에서 채움
+print('{:10}'.format('nice')) #공백을 오른쪽부터 채움
 
 print('{:_<10}'.format('nice'))
-print('{:^10}'.format('nice'))
+print('{:^10}'.format('nice')) #중앙정렬
 
-print('%.5s' % ('pythonstudy',))
+print('%.5s' % ('pythonstudy',)) # 5글자만 보여줌
 print('{:.5}'.format('pythonstudy'))
 print('{:10.5}'.format('pythonstudy'))
 

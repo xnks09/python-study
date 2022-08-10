@@ -20,7 +20,7 @@ var = 75
 
 # 출력
 print(var)
-print(type(var)
+print(type(var))
 
 # 재 선언
 var = "Change Value"
@@ -71,13 +71,14 @@ m = 800
 n  = 800
 
 # 같은 오브젝트 참조
+# 아래의 id는 서로 동일함. m과 n이 800으로 같으므로...
 print(id(m))
 print(id(n))
 
 # 다양한 변수 선언
-# Camel Case :  numberOfCollegeGraduates
-# Pascal Case :  NumberOfCollegeGraduates
-# Snake Case :  number_of_college_graduates
+# Camel Case :  numberOfCollegeGraduates (일반적으로 Method)
+# Pascal Case :  NumberOfCollegeGraduates (일반적으로 Class)
+# Snake Case :  number_of_college_graduates (Python에서 변수를 선언할 때 자주 사용)
 
 # 허용하는 변수 선언 법
 age = 1
