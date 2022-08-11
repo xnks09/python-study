@@ -150,10 +150,10 @@ print(complex('3'))  # 문자 -> 복소수
 print(complex(False))  # Bool -> 복소수
 
 # 수치 연산 함수
-print(abs(-7))
-x, y = divmod(100, 8)
+print(abs(-7)) # 결과 : 7
+x, y = divmod(100, 8) # 결과 : 12, 4
 print(x, y)
-print(pow(5, 3))
+print(pow(5, 3)) # 5의 3승 또는 5 ** 3 이렇게 쓸 수도 있음
 
 #외부 모듈
 import math
@@ -164,4 +164,4 @@ print(math.ceil(5.1))   # x 이상의 수 중에서 가장 작은 정수
 #floor
 
 #pi
-print(math.pi)
+print(math.pi) # 3.141592653589793
