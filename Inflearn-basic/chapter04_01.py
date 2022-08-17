@@ -1,11 +1,18 @@
+import sys
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
+
+
 # Chapter04-1
 # 파이썬 제어문
 # IF 실습
 
 # 기본 형식
 
-print(type(True))
-print(type(False))
+print(type(True)) # 0이 아닌 수, "abc", [1,2,3...], (1,2,3...)..
+print(type(False)) #0 ,"", [], (), {}...
 
 # 예1
 if True:
@@ -57,11 +64,11 @@ if city:
     print("You are in:", city)
 else:
     # 출력
-    print("Please enter your city")
+    print("Please enter your city") # 빈 문자열이기에 해당 print 실행
 
 city = "Seoul"
 if city:
-    print("You are in:", city)
+    print("You are in:", city) # 문자열을 갖고 있기에 해당 print 실행
 else:
     # 출력
     print("Please enter your city")
@@ -76,7 +83,7 @@ c = 10
 
 print('and : ', a > b and b > c)  # a > b > c
 print('or : ', a > b or b > c)
-print('not : ', not a > b)
+print('not : ', not a > b) # not은 반대로 출력해줌
 print('not : ', not b > c)
 print(not True)
 print(not False)
@@ -140,10 +147,10 @@ else:
 
 # in, not in
 
-q = [10, 20, 30]
-w = {70, 80, 90, 90}
-e = {"name": 'Lee', "city": "Seoul", "grade": "A"}
-r = (10, 12, 14)
+q = [10, 20, 30] # 리스트
+w = {70, 80, 90, 90} # 집합
+e = {"name": 'Lee', "city": "Seoul", "grade": "A"} #딕셔너리
+r = (10, 12, 14) # 튜플
 
 print(15 in q)
 print(90 in w)
