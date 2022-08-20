@@ -68,8 +68,11 @@ my_info = {
 for key in my_info:
     print(key, ":", my_info[key])
 
+#value :  Lee
+#value :  33
+#value :  Seoul
 for val in my_info.values():
-    print(val)
+    print('value : ',val)
 
 # 예제5
 name = 'FineApplE'
@@ -79,6 +82,16 @@ for n in name:
         print(n)
     else:
         print(n.upper())
+
+#F
+#I
+#N
+#E
+#A
+#P
+#P
+#L
+#E
 
 numbers = [14, 3, 4, 7, 10, 24, 17, 2, 33, 15, 34, 36, 38]
 
@@ -101,8 +114,10 @@ for v in lt:
     print("multiply by 2:", v * 3)
 
 # else 구문
+
 numbers = [14, 3, 4, 7, 10, 24, 17, 2, 33, 15, 34, 36, 38]
 
+#45라는 숫자를 찾지 못했을 경우 else 구문이 실행됨
 for num in numbers:
     if num == 34:  # 45
         print("Found : 34!")
@@ -114,14 +129,14 @@ else:
 # 구구단 출력
 
 for i in range(2, 10):
-    for j in range(2, 10):
+    for j in range(1, 10):
         print('{:4d}'.format(i * j), end='')
     print()
 
 
 # 변환 예제
 name = 'Aceman'
-print('Reversed : ', reversed(name))
-print('List : ', list(reversed(name)))
-print('Tuple : ', tuple(reversed(name)))
+print('Reversed : ', reversed(name)) #Reversed :  <reversed object at 0x000001760331BF40>
+print('List : ', list(reversed(name))) # List로 형변환
+print('Tuple : ', tuple(reversed(name))) # tuple로 현변환
 print('Set : ', set(reversed(name)))  # 순서X

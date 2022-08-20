@@ -14,7 +14,7 @@ while n > 0:
 # 예제2
 a = ['foo', 'bar', 'baz']
 
-while a:
+while a: #이 자체가 데이터가 있는 것이므로 무한반복하고 있음
     print(a.pop())
 
 # if 중첩
