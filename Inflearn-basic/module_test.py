@@ -7,7 +7,7 @@ print(sys.path)
 print(type(sys.path))
 
 # 모듈 경로 삽입
-# sys.path.append('C:/math')
+# sys.path.append('C:/math') #영구적으로 등록되는 것은 아님
 
 # print(sys.path)
 

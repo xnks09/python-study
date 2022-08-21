@@ -123,7 +123,7 @@ driver.get(url)
 
 ############################################# 로그인 처리 ###########################################################
 userId = driver.find_element('id', 'am_id')
-userId.send_keys('shooting113')
+userId.send_keys('rnsoskfk2')
 
 userPwd = driver.find_element('id', 'am_pwd')
 userPwd.send_keys('wpdl0907!')
@@ -180,6 +180,7 @@ for productList in range(len(df.index)):
     driver.find_element('xpath','//*[@id="listContainer"]/ul/li[6]/button').click()
     time.sleep(2)
     driver.switch_to.parent_frame() # 상위 프레임으로 재이동
+    time.sleep(3)
     driver.find_element('xpath','//*[@id="commerce_coupang"]/td/div[1]/button').click() # 쿠팡 카테고리 매핑 버튼 클릭
     time.sleep(1)
     driver.find_element('name', 'categoryMappingTitle').send_keys(df.iloc[productList, 3]) # 카테고리 문자 복사
@@ -206,7 +207,7 @@ for productList in range(len(df.index)):
     driver.find_element('xpath','//*[@id="listContainer"]/ul/li[7]/button').click() # 일괄 제목 변경 클릭
     time.sleep(2)
     driver.switch_to.parent_frame() # 상위 프레임으로 재이동
-    time.sleep(1)
+    time.sleep(3)
     driver.find_element('xpath','//*[@id="titleModal"]/div/div/div[2]/div[1]/div/table/tbody/tr[2]/td[1]/input[1]').clear()
     time.sleep(1)
     driver.find_element('xpath','//*[@id="titleModal"]/div/div/div[2]/div[1]/div/table/tbody/tr[2]/td[1]/input[1]').send_keys(100) # 글자수를 100으로 변경
@@ -240,7 +241,7 @@ for productList in range(len(df.index)):
     driver.find_element('xpath','//*[@id="listContainer"]/ul/li[8]/button').click() # 일괄 키워드 편집 클릭
     time.sleep(2)
     driver.switch_to.parent_frame() # 상위 프레임으로 재이동
-    time.sleep(1)
+    time.sleep(3)
     driver.find_element('name', 'addText').send_keys(df.iloc[productList, 2]) # 적용된 검색어 입력
     driver.find_element('name', 'addText').send_keys(Keys.ENTER) # 엔터키 입력
     time.sleep(1)
@@ -277,12 +278,18 @@ for productList in range(len(df.index)):
     wait = WebDriverWait(driver, 9999999999999999999999)
     element = wait.until(EC.alert_is_present())
     alert_result = driver.switch_to.alert
-    print(alert_result.text)
-    alert_result.accept()   
-    print('[업로드가 완료되었습니다.........................................]')
+    print(alert_result.text)    
     
+    if "A00683854" in alert_result.text:   
+        print('[구매 옵션 5000개를 초과하여 업로드가 중지되었습니다.] 등록 중이던 폴더명 : ', df.iloc[productList, 0])
+        sys.exit(1)
+    else:
+        print('[업로드가 완료되었습니다.........................................]')
+        
+    alert_result.accept()
+        
+    time.sleep(2)
     driver.get('https://mr-seo.co.kr/mr_product/list')
-
     time.sleep(10)
     
     

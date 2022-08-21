@@ -28,7 +28,7 @@ def power(x, y):
 # print('-' * 15)
 
 # __name__ 사용
-if __name__ == "__main__":
+if __name__ == "__main__": #main을 통해서 이 파일을 통해 실행할 때만 실행되고, 다른데서 import해서 이것을 실행할 때는 아래가 실행되지 않음
     print('-' * 15)
     print('called! __main__')
     print(add(5,5))

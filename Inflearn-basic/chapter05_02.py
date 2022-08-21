@@ -1,7 +1,7 @@
 # Chapter05-2
 # 파이썬 사용자 입력
 # Input 사용법
-# 기본 타입(str)
+# 기본 타입(str), 기본적으로 input은 str로 들어오고, 필요시 형변환해야함
 
 # 예제1
 name = input("Enter Your Name : ")

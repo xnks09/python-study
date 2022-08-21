@@ -40,9 +40,9 @@ def func_mul2(x):
     y1 = x * 10
     y2 = x * 20
     y3 = x * 30
-    return (y1, y2, y3)
+    return (y1, y2, y3) # 튜플로 묶어주는 방법
 
-q = func_mul2(20)
+q = func_mul2(20) # 튜플로 묶어줘서 팩킹됨
 
 print(type(q), q, list(q))
 
@@ -72,17 +72,17 @@ print(type(d), d, d.get('v2'), d.items(), d.keys())
 # 중요
 # *args, **kwargs
 
-# *args(언팩킹)
-def args_func(*args): # 매개변수 명 자유
+# *args(언팩킹) 튜플로 접근(*)
+def args_func(*args): # 매개변수 명 자유, 인자 개수만큼 옆으로 변수로 받아야하는데 *로 바로 받아옴
     for i, v in enumerate(args):
         print('Result : {}'.format(i), v)
     print('-----')
 
 args_func('Lee')
 args_func('Lee', 'Park')
-args_func('Lee', 'Park', 'Kim')
+args_func('Lee', 'Park', 'Kim') # 튜플형태
 
-# **kwargs(언팩킹)
+# **kwargs(언팩킹), 딕셔너리로 접근(**)
 def kwargs_func(**kwargs): # 매개변수 명 자유
     for v in kwargs.keys():
         print("{}".format(v), kwargs[v])
@@ -96,7 +96,7 @@ kwargs_func(name1='Lee', name2='Park', name3='Cho')
 def example(args_1, args_2, *args, **kwargs):
     print(args_1, args_2, args, kwargs)
 
-example(10, 20, 'Lee', 'Kim', 'Park', 'Cho', age1=20, age2=30, age3=40)
+example(10, 20, 'Lee', 'Kim', 'Park', 'Cho', age1=20, age2=30, age3=40) # 10 20 ('Lee', 'Kim', 'Park', 'Cho') {'age1': 20, 'age2': 30, 'age3': 40}
 
 # 중첩함수
 
@@ -107,6 +107,11 @@ def nested_func(num):
     func_in_func(num + 100)
 
 nested_func(100)
+#-----------------------------------
+# 실행결과
+#In func
+#200
+#-----------------------------------
 
 # 실행불가
 # func_in_func(1000)
@@ -139,6 +144,7 @@ def func_final(x, y, func):
     print('>>>>', x * y * func(100, 100))
 
 func_final(10, 20, lambda_mul_func)
+func_final(10, 20, lambda x,y:x*y) # 일시적으로 안에 람다를 바로 명시해서 사용 가능
  
 
 # Hint
