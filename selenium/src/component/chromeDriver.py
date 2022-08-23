@@ -4,6 +4,8 @@ import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+import sys
+import os
 
 userList = {
     '1번': {'userId': 'shooting113', 'password': 'wpdl0907!', 'profile': 'Default'},
@@ -30,10 +32,17 @@ def getChromeOptions(profile):
     return chrome_options
 
 def getChromeDriver(workingUser):
-    
+
+    driver =''
+    if getattr(sys, 'frozen', False):
+        chromedriver_path = os.path.join(sys._MEIPASS, "chromedriver.exe")
+        driver = webdriver.Chrome(chromedriver_path, options=getChromeOptions(userList.get(workingUser).get('profile')))
+    else:
+        driver = webdriver.Chrome(r'C:\Dev\git\python-study\selenium\files\chromedriver.exe', options=getChromeOptions(userList.get(workingUser).get('profile'))) 
+
     #driver = webdriver.Chrome(r'C:\Dev\git\python-study\selenium\files\chromedriver.exe', options=getChromeOptions(profile))
     #driver = webdriver.Remote('http://localhost:4444/wd/hub', chrome_options.to_capabilities())
-    return webdriver.Chrome(r'C:\Dev\git\python-study\selenium\files\chromedriver.exe', options=getChromeOptions(userList.get(workingUser).get('profile')))     
+    return driver
     
 #url = 'https://mr-seo.co.kr/auth/login'
 #driver.get(url)
