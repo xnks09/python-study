@@ -3,6 +3,7 @@ import sys
 import io
 import time
 import collector
+import register
 sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
 
@@ -23,6 +24,7 @@ if(workType == 1 or workType == 2):
         collector.init()
     else:
         print('[등록]을 시작해볼게용~♥')
+        register.init()
 else:
     print('숫자 1, 2 둘 중 하나만 넣어야지~')
     print('프로그램을 다시 시작해줘요~')

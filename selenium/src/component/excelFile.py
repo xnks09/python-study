@@ -160,4 +160,48 @@ def getCollectorFrameData(rowData):
     
     return df_sort_values
 
+# 엑셀에서 원천 수집데이터 로딩
+def getRegisterExcel():
+    
+    beforeDf = pd.read_excel(excelFile, engine = "openpyxl", usecols='A,B,C,D,E,F', header=0, sheet_name=excelSheetName, keep_default_na=False)
+
+    checkDataRow(beforeDf) # 데이터 건수 체크
+    
+    return beforeDf
+
+
+# 원천 엑셀 데이터로부터 신규 DataFrame 생성 및 데이터 유효성 체크
+def getRegisterFrameData(rowData):
+    
+    rowData.rename(columns = {'계정' : 'account', '검색 키워드' : 'searchKeyword', '제목' : 'title', '검색어' : 'searchWord','쿠팡 카테고리' : 'coupangCategory','무게' : 'weight'}, inplace = True)
+
+    df = pd.DataFrame(columns=['account','searchKeyword','title', 'searchWord','coupangCategory','weight'])
+
+    for product in range(len(rowData.index)):
+               
+        validationCheck = []
+        validationCheck.append(str(rowData.loc[product, 'account']).replace(" ", ""))
+        validationCheck.append(str(rowData.loc[product, 'searchKeyword']).replace(" ", ""))
+        validationCheck.append(str(rowData.loc[product, 'title']).replace(" ", ""))
+        validationCheck.append(str(rowData.loc[product, 'searchWord']).replace(" ", ""))
+        validationCheck.append(str(rowData.loc[product, 'coupangCategory']).replace(" ", ""))
+        validationCheck.append(str(rowData.loc[product, 'weight']).replace(" ", ""))
         
+        for i in validationCheck:
+            try:
+                if(i == ''):
+                    raise
+            except:
+                print('==================================================================================')
+                print('Oops!!!')
+                print('엑셀에 없는 데이터가 있어서 종료할게~~~')
+                print('다시 확인하고 프로그램 돌려줭~')
+                print('==================================================================================')
+                sys.exit(1)      
+
+        df.loc[product] =[rowData.loc[product, 'account'], rowData.loc[product, 'searchKeyword'], rowData.loc[product, 'title'], 
+                          rowData.loc[product, 'searchWord'], rowData.loc[product, 'coupangCategory'], rowData.loc[product, 'weight']]
+    
+    df_sort_values = df.sort_values(by='account',ascending=True)
+    
+    return df_sort_values
