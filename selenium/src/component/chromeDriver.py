@@ -23,7 +23,7 @@ def getChromeOptions(profile):
     #chrome_options.add_argument('--start-fullscreen') #브라우저가 풀스크린 모드(F11)로 실행됩니다.
     #chrome_options.add_argument('--blink-settings=imagesEnabled=false') #브라우저에서 이미지 로딩을 하지 않습니다.
     chrome_options.add_argument('--mute-audio') #브라우저에 음소거 옵션을 적용합니다.
-    chrome_options.add_argument('--user-data-dir=C:/Users/mypc/AppData/Local/Google/Chrome/User Data') #사용자 환경설정 경로
+    chrome_options.add_argument('--user-data-dir=C:/Users/nks/AppData/Local/Google/Chrome/User Data') #사용자 환경설정 경로
     #chrome_options.add_argument('--profile-directory=profile 2') #사용자 환경설정 경로
     #chrome_options.add_argument('--profile-directory=Default') #사용자 환경설정 경로
     chrome_options.add_argument('--profile-directory='+profile)

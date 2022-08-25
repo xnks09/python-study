@@ -34,6 +34,7 @@ siteSelectList = {
     'tao': {'selectIndex': 10}
 }
 
+ 
 
 def init():
     excelFile.checkFileExist()
@@ -44,20 +45,25 @@ def init():
     print(newData)
     print("==============================================================================")
     doCollector(newData)
-    #print(type(newData))
+    
+ 
+    
     
 def doCollector(rowData):
     
+    mail.sendMail('','============================================','내용없음')
+    mail.sendMail('','[데이터 수집 시작 - ' +str(len(rowData.index))+'건]','내용없음')
+    
     # 초기 시작 계정
-    workingUser = rowData.iloc[0,0]
-
+    workingUser = rowData.loc[0,'account']
+   
     # 전체 수집 건수
     totalCnt = len(rowData.index)
     
     driver = chromeDriver.getChromeDriver(workingUser)
     chromeDriver.doLogin(driver, workingUser)
     time.sleep(3)
-
+    
     for productList in range(len(rowData.index)):
         
         targetKeyword = rowData.loc[productList, 'searchKeyword']
@@ -66,7 +72,13 @@ def doCollector(rowData):
         
         print('=============================================================================')
         print(count_logLabel,targetKeyword_logLabel,'에 대한 수집을 시작합니다.',utility.now())
-       
+
+        if rowData.loc[productList, 'account'] != workingUser:
+            workingUser = rowData.loc[productList, 'account']
+            print(count_logLabel, workingUser,'계정으로 재로그인을 시도합니다.')
+            chromeDriver.doLogin(driver, workingUser)
+            time.sleep(3)
+                   
         # 실제 수집 리스트
         pageList = {}
         siteIndex = 0
@@ -117,9 +129,11 @@ def doCollector(rowData):
 
             if(isAlert):
                 alert_result = driver.switch_to.alert
+                print(count_logLabel, '-------------------------------------------------------------')
                 print(count_logLabel,' - 오류 : ',targetKeyword,'에 대한 수집 중 오류가 발생했습니다.')
                 print(count_logLabel,' - 오류내용 : ',alertText)
-                mail.sendMail('오류', alertText)
+                print(count_logLabel, '-------------------------------------------------------------')
+                mail.sendMail('실패', count_logLabel + targetKeyword_logLabel+' 수집 중 오류 발생', alertText)
                 alert_result.accept()
                 continue
 
@@ -139,13 +153,20 @@ def doCollector(rowData):
                 pageSelect.select_by_index(pageCnt-1)
 
             time.sleep(5)
+            
+            driver.find_element('xpath','/html/body/div[1]/ul[1]/div/form/ul/div[2]/button').click()
+            wait = WebDriverWait(driver, 10000)
+            element = wait.until(EC.alert_is_present())
+            alert_result = driver.switch_to.alert
+            
             returnMail = count_logLabel + targetKeyword_logLabel+ '에 대한 수집이 종료되었습니다.'+ utility.now()
-            mail.sendMail('성공', returnMail)
-            print(returnMail)
-            #driver.find_element('xpath','//*[@id="checkItemUpdate"]').click()
-            #wait = WebDriverWait(driver, 9999999999999999999999)
-            #element = wait.until(EC.alert_is_present())
-            #alert_result = driver.switch_to.alert
-            #print(alert_result.text)
-            #alert_result.accept()
-       
+            #kakao.f_send_talk(returnMail)
+            mail.sendMail('성공', returnMail, alert_result.text)
+            
+            print(alert_result.text)
+            alert_result.accept()
+            
+    mail.sendMail('','[데이터 수집 종료 - ' +str(len(rowData.index))+'건]','내용없음')
+    mail.sendMail('','============================================','내용없음')
+    #kakao.f_send_talk('[데이터 수집 종료 - ' +str(len(rowData.index))+'건]')
+
