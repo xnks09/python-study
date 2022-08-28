@@ -19,55 +19,65 @@ import component.mail as mail
 import component.chromeDriver as chromeDriver
 import pandas as pd
 import openpyxl
+import component.log as log
 
-sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
-sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
+#sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
+#sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
 
 ####################################################################################################################
-
+logger = log.getLogger("common")
 
 def init():
-    excelFile.checkFileExist()
-    rowData = excelFile.getRegisterExcel()
-    newData = excelFile.getRegisterFrameData(rowData)
-    print('[데이터 등록 시작 - ', len(newData.index),'건]')
-    print("==============================================================================")
-    print(newData)
-    print("==============================================================================")
-    doRegist(newData)
-    
+    try:
+        excelFile.checkFileExist()
+        rowData = excelFile.getRegisterExcel()
+        newData = excelFile.getRegisterFrameData(rowData)
+        logger.info('[데이터 등록 시작 - ', len(newData.index),'건]')
+        logger.info('==============================================================================')
+        logger.info(newData)
+        logger.info('==============================================================================')
+        result = doRegist(newData)
+    except Exception as e:
+        logger.info(e)
+        return utility.errorMessageHandler(str(e))
+    return result
+   
 def doRegist(rowData):
-
-    mail.sendMail('','============================================','내용없음')
-    mail.sendMail('','[데이터 등록 시작 - ' +str(len(rowData.index))+'건]','내용없음')
     
+    mail.sendMail('등록','============================================','내용없음')
+    mail.sendMail('등록','[데이터 등록 시작 - ' +str(len(rowData.index))+'건]','내용없음')
+
     # 초기 시작 계정
     workingUser = rowData.loc[0,'account']
-   
+    
     # 전체 수집 건수
     totalCnt = len(rowData.index)
-    
+
     driver = chromeDriver.getChromeDriver(workingUser)
     chromeDriver.doLogin(driver, workingUser)
     time.sleep(3)
-    
+
     for productList in range(len(rowData.index)):
-        
+
         driver.get('https://mr-seo.co.kr/mr_product/list')
         time.sleep(4)
         targetKeyword = rowData.loc[productList, 'searchKeyword']
         count_logLabel = '['+ str(productList+1)+'/'+str(totalCnt) +'] ' 
         targetKeyword_logLabel = '['+ targetKeyword +']' 
-        
-        print('=============================================================================')
-        print(count_logLabel,targetKeyword_logLabel,'에 대한 등록을 시작합니다.',utility.now())
-
+            
+        logger.info('==============================================================================')
+        logger.info('==============================================================================')
+        logger.info(count_logLabel + targetKeyword_logLabel + '에 대한 등록을 시작합니다.')
+            
         if rowData.loc[productList, 'account'] != workingUser:
             workingUser = rowData.loc[productList, 'account']
-            print(count_logLabel, workingUser,'계정으로 재로그인을 시도합니다.')
+            logger.info(count_logLabel + targetKeyword_logLabel+'계정으로 재로그인을 시도합니다.')
             chromeDriver.doLogin(driver, workingUser)
-            time.sleep(3)
-                   
+            time.sleep(2)
+            driver.get('https://mr-seo.co.kr/mr_product/list')
+            logger.info(count_logLabel + targetKeyword_logLabel+'계정으로 로그인되었습니다.')
+                
+
         # 실제 등록 리스트
         pageList = {}
         siteIndex = 0
@@ -75,11 +85,11 @@ def doRegist(rowData):
         # 폴더입력
         folderList = Select(driver.find_element('id', 'product_folder'))
         folderList.select_by_value(rowData.loc[productList, 'searchKeyword'])
-        
+
         # 조회버튼 클릭
         driver.find_element('xpath','//*[@id="submit"]').click()
         time.sleep(5)
-    
+
         # 수집 결과의 iframe 페이지로 이동
         driver.switch_to.frame('listFrame')
 
@@ -101,12 +111,12 @@ def doRegist(rowData):
         wait = WebDriverWait(driver, 120)
         element = wait.until(EC.alert_is_present())
         alert_result = driver.switch_to.alert
-        print(alert_result.text)
+        #print(alert_result.text)
         alert_result.accept()
-        print('[무게 설정이 완료되었습니다...........................................]')
-        
+        logger.info(count_logLabel + '무게 설정이 완료되었습니다.')
+
         # 일괄 카테고리 편집
-        print('[일괄 카테고리 편집을 시작합니다..........................................]')
+        logger.info(count_logLabel + '일괄 카테고리 편집을 시작합니다')
         driver.find_element('xpath','//*[@id="listContainer"]/ul/li[6]/button').click()
         time.sleep(2)
         driver.switch_to.parent_frame() # 상위 프레임으로 재이동
@@ -128,10 +138,11 @@ def doRegist(rowData):
         alert_result = driver.switch_to.alert
         print(alert_result.text)
         alert_result.accept()
-        print('[일괄 카테고리 편집이 완료되었습니다.........................................]')
+        logger.info(count_logLabel + '일괄 카테고리 편집이 완료되었습니다.')
 
         # 일괄 제목 설정   
-        print('[일괄 제목 설정을 시작합니다..........................................]')
+        logger.info(count_logLabel + '일괄 제목 설정을 시작합니다.')
+
         # 수집 결과의 iframe 페이지로 이동
         driver.switch_to.frame('listFrame')
         driver.find_element('xpath','//*[@id="listContainer"]/ul/li[7]/button').click() # 일괄 제목 변경 클릭
@@ -147,7 +158,7 @@ def doRegist(rowData):
         originalTitleLength = len(originalTitle)
         enrollTitle = originalTitle.ljust(originalTitleLength+1, ' ')   
         driver.find_element('name', 'title_front_text').send_keys(enrollTitle) # 제목 입력
-        
+
         keywordDelete = originalTitle.replace(' ', ',')
         driver.find_element('name', 'titleOverlap').send_keys(keywordDelete) # 키워드 제거 입력
         time.sleep(1)
@@ -164,9 +175,11 @@ def doRegist(rowData):
         alert_result = driver.switch_to.alert
         print(alert_result.text)
         alert_result.accept()
-        print('[일괄 제목 설정이 완료되었습니다.........................................]')
+        logger.info(count_logLabel + '일괄 제목 설정이 완료되었습니다.')
+            
         # 일괄 키워드 설정   
-        print('[일괄 키워드 설정을 시작합니다..........................................]')
+        logger.info(count_logLabel + '일괄 키워드 설정을 시작합니다.')
+
         # 수집 결과의 iframe 페이지로 이동
         time.sleep(2)
         driver.switch_to.frame('listFrame')
@@ -186,7 +199,7 @@ def doRegist(rowData):
         alert_result = driver.switch_to.alert
         print(alert_result.text)
         alert_result.accept()
-        print('[일괄 키워드 설정이 완료되었습니다.........................................]')
+        logger.info(count_logLabel + '일괄 키워드 설정을 완료되었습니다.')
 
         # 최종 업로드 처리
         # 등록 결과의 iframe 페이지로 이동
@@ -202,8 +215,7 @@ def doRegist(rowData):
         print(alert_result.text)
         alert_result.accept()
 
-
-        print('[업로드를 시작합니다..........................................]')
+        logger.info(count_logLabel + '업로드를 시작합니다.')
 
         # 업로드에 대한 alert 처리
         wait = WebDriverWait(driver, 1800)
@@ -211,18 +223,24 @@ def doRegist(rowData):
         alert_result = driver.switch_to.alert
         print(alert_result.text)    
 
-        if "A00683854" in alert_result.text:   
-            print('[구매 옵션 5000개를 초과하여 업로드가 중지되었습니다.] 등록 중이던 폴더명 : ', rowData.loc[productList, 'searchKeyword'])
+        if "A00683854" in alert_result.text:
+            logger.info(count_logLabel + '구매 옵션 5000개를 초과하여 업로드가 중지되었습니다.')   
+            logger.info(count_logLabel + '등록 중이던 폴더명 : ' + rowData.loc[productList, 'searchKeyword'])   
+            #print('[구매 옵션 5000개를 초과하여 업로드가 중지되었습니다.] 등록 중이던 폴더명 : ', rowData.loc[productList, 'searchKeyword'])
             sys.exit(1)
         else:
+            logger.info(count_logLabel + targetKeyword_logLabel+  '에 대한 등록이 종료되었습니다.')   
             returnMail = count_logLabel + targetKeyword_logLabel+ '에 대한 등록이 종료되었습니다.'+ utility.now()
             #kakao.f_send_talk(returnMail)
-            mail.sendMail('성공', returnMail, alert_result.text)
+            mail.sendMail('등록', returnMail, alert_result.text)
 
         alert_result.accept()
 
         time.sleep(3)
-    
-    mail.sendMail('','[데이터 등록 종료 - ' +str(len(rowData.index))+'건]','내용없음')
-    mail.sendMail('','============================================','내용없음')
+
+    logger.info('[데이터 등록 종료 - ' + str(len(rowData.index)) + '건]')
+    logger.info('==============================================================================')
+    mail.sendMail('등록','[데이터 등록 종료 - ' +str(len(rowData.index))+'건]','내용없음')
+    mail.sendMail('등록','============================================','내용없음')
+    return 'success','데이터 등록이 종료되었습니다.'
     #kakao.f_send_talk('[데이터 수집 종료 - ' +str(len(rowData.index))+'건]')

@@ -7,7 +7,7 @@ def sendMail(type, subject, text):
     smtp.starttls()  # TLS 사용시 필요
     smtp.login('9.miho.noreply@gmail.com', 'uqdtgvtccddqjrpy')
     
-    subjectType = '[수집]['+type+']'
+    subjectType = '['+type+']'
     msg = MIMEText(text)
     
     msg['Subject'] = subjectType+subject

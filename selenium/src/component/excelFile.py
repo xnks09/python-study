@@ -2,6 +2,9 @@ import sys
 import os.path  
 import pandas as pd
 import numpy as np
+import component.log as log
+
+logger = log.getLogger("common")
 
 excelFile = 'C:/자동화폴더/상품목록.xlsx'
 excelSheetName = 'list'
@@ -9,19 +12,17 @@ excelSheetName = 'list'
 # 엑셀파일 존재여부 체크
 def checkFileExist():
     try:
+
         if os.path.isfile(excelFile):
-            print('상풍목록 엑셀 파일이 잘 있네~~')
-            print('이제 수집을 시작해볼게용~~♡')
+            logger.info('엑셀 파일이 등록을 확인했습니다.')
+            logger.info('추가 설정 정보를 체크 후 작업을 시작합니다.')
         else:
-            raise
-    except:
-        print('==================================================================================')
-        print('Oops!!!')
-        print('쟈기~상품목록 파일이 없네~~?')
-        print('자자..아래를 참고해서 경로에 파일을 넣어줘~')
-        print('C:/자동화폴더/상품목록.xlsx')
-        print('==================================================================================')
-        sys.exit(1)
+            raise Exception('excel.not.exist')
+    except Exception as e:
+        raise Exception('excel.not.exist')
+        logger.info('[오류] 상품목록 엑셀 파일이 존재하지 않습니다.')
+        logger.info('[오류] C:/자동화폴더/상품목록.xlsx에 해당 파일을 복사해주세요.')
+        #sys.exit(1)
 
 
 # 수행할 데이터의 전체 건수 체크, 0이면 종료
@@ -31,19 +32,11 @@ def checkDataRow(rowData):
     
     try:
         if productCnt < 1:
-            raise
+            raise Exception()
         else:
-            print('==================================================================================')
-            print('엑셀을 잘 읽은 것 같앙~')
-            print('이제 시작할꺼야~')
-            print('==================================================================================')
+            logger.info('작업 대상 목록을 식별했습니다.')
     except:
-        print('==================================================================================')
-        print('Oops!!!')
-        print('쟈갸 엑셀에 파일에 수집할 목록이 없쩌!!!')
-        print('수집 상품을 등록해주세용~~♡')
-        print('==================================================================================')
-        sys.exit(1)
+        raise Exception('excel.product.not.exist')
     
 
 # 엑셀에서 원천 수집데이터 로딩
@@ -197,11 +190,11 @@ def getRegisterFrameData(rowData):
                 print('엑셀에 없는 데이터가 있어서 종료할게~~~')
                 print('다시 확인하고 프로그램 돌려줭~')
                 print('==================================================================================')
-                sys.exit(1)      
-
+                sys.exit(1)
+        #df.DataFrame([rowData.loc[product, 'account'], rowData.loc[product, 'searchKeyword'], rowData.loc[product, 'title'],rowData.loc[product, 'searchWord'], rowData.loc[product, 'coupangCategory'], rowData.loc[product, 'weight']])
         df.loc[product] =[rowData.loc[product, 'account'], rowData.loc[product, 'searchKeyword'], rowData.loc[product, 'title'], 
                           rowData.loc[product, 'searchWord'], rowData.loc[product, 'coupangCategory'], rowData.loc[product, 'weight']]
     
-    df_sort_values = df.sort_values(by='account',ascending=True)
-    
+    df_sort_values = df.sort_values(by='account',ascending=True, ignore_index=True)   
+
     return df_sort_values
